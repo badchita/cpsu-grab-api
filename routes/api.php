@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApiController;
 
 Route::post("signUp", [ApiController::class, "signUp"]);
+Route::post("signIn", [ApiController::class, "signIn"]);
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
