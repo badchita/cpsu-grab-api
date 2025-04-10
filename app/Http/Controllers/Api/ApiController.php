@@ -6,28 +6,66 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ApiController extends Controller
 {
+    private $status = 200;
     // Sign Up Api
     public function signUp(Request $request)
     {
-        $request->validate([
-            "name" => "required|string",
-            "email" => "required|email|unique:users,email",
-            "password" => "required|confirmed",
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required|string|max:255',
+            'middleName' => 'string|max:255',
+            'lastName' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+            'contactNumber' => 'required|string',
+            'userType' => 'string|max:255',
+            'dateOfBirth' => 'string|max:255',
         ]);
 
-        User::create($request->all());
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()->all()], 405);
+        }
 
-        return response()->json([
-            "status" => true,
-            "message" => "User Signed Up Successfully"
-        ]);
+        $users = new User();
+
+        $users->first_name = $request->firstName;
+        $users->middle_name = $request->middleName;
+        $users->last_name = $request->lastName;
+        $users->email = $request->email;
+        $users->contact_number = $request->contactNumber;
+        $users->date_of_birth = $request->dateOfBirth;
+        $users->password = $request->password;
+        $users->user_type = $request->userType;
+        $users->status = 'Pending';
+
+        $users->save();
+        // User::create($request->all());
+        $response = [
+            'message' => 'Customer Added!',
+            'status' => $this->status
+        ];
+
+        return response($response, $this->status);
+        // $request->validate([
+        //     "name" => "required|string",
+        //     "email" => "required|email|unique:users,email",
+        //     "password" => "required|confirmed",
+        // ]);
+
+        // User::create($request->all());
+
+        // return response()->json([
+        //     "status" => true,
+        //     "message" => "User Signed Up Successfully"
+        // ]);
     }
 
     // Login In Api
-    public function signIn(Request $request) {
+    public function signIn(Request $request)
+    {
         $request->validate([
             "email" => "required|email",
             "password" => "required",
@@ -35,7 +73,7 @@ class ApiController extends Controller
 
         $user = User::where("email", $request->email)->first();
         if (!empty($user)) {
-            if(Hash::check($request->password, $user->password)) {
+            if (Hash::check($request->password, $user->password)) {
                 $token = $user->createToken("myToken")->plainTextToken;
 
                 return response()->json([
@@ -46,18 +84,19 @@ class ApiController extends Controller
             } else {
                 return response()->json([
                     "status" => false,
-                    "message"=> "Password did not match"
+                    "message" => "Password did not match"
                 ]);
             }
         } else {
             return response()->json([
-                "status"=> false,
-                "message"=> "Email is invalid"
+                "status" => false,
+                "message" => "Email is invalid"
             ]);
         }
     }
 
-    public function profile() {
+    public function profile()
+    {
         $userData = auth()->user();
 
         return response()->json([
@@ -67,7 +106,8 @@ class ApiController extends Controller
         ]);
     }
 
-    public function signOut() {
+    public function signOut()
+    {
         auth()->user()->tokens()->delete();
 
         return response()->json([
