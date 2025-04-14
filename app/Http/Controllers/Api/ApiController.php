@@ -43,25 +43,12 @@ class ApiController extends Controller
         $users->status = 'Pending';
 
         $users->save();
-        // User::create($request->all());
         $response = [
             'message' => 'Customer Added!',
             'status' => $this->status
         ];
 
         return response($response, $this->status);
-        // $request->validate([
-        //     "name" => "required|string",
-        //     "email" => "required|email|unique:users,email",
-        //     "password" => "required|confirmed",
-        // ]);
-
-        // User::create($request->all());
-
-        // return response()->json([
-        //     "status" => true,
-        //     "message" => "User Signed Up Successfully"
-        // ]);
     }
 
     // Login In Api
