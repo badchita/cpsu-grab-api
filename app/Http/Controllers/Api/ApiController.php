@@ -37,6 +37,7 @@ class ApiController extends Controller
         $users->email = $request->email;
         $users->contact_number = $request->contactNumber;
         $users->date_of_birth = $request->dateOfBirth;
+        $users->gender = $request->gender;
         $users->password = $request->password;
         $users->user_type = $request->userType;
         $users->status = 'Pending';
