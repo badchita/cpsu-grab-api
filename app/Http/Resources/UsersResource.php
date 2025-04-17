@@ -18,7 +18,6 @@ class UsersResource extends JsonResource
      */
     public function toArray($request)
     {
-        // return ($this->teacher_id);
         return [
             'id' => $this->id,
             'firstName' => $this->first_name,
@@ -29,6 +28,7 @@ class UsersResource extends JsonResource
             'status' => $this->status,
             'contactNumber' => $this->contact_number,
             'dateOfBirth' => $this->date_of_birth,
+            'gender' => $this->gender,
         ];
     }
 }
