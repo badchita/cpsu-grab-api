@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class ApiController extends Controller
+class AuthController extends Controller
 {
     private $status = 200;
     // Sign Up Api
