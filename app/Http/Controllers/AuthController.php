@@ -68,7 +68,8 @@ class AuthController extends Controller
                     "status" => true,
                     "message" => "Sign In successfully",
                     "token" => $token,
-                    "userId" => $user->id
+                    "userId" => $user->id,
+                    "isOnboarded" => $user->is_onboarded,
                 ]);
             } else {
                 return response()->json([
