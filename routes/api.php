@@ -10,5 +10,6 @@ Route::post("/signIn", [AuthController::class, "signIn"]);
 Route::group(["middleware"=> ["auth:sanctum"]], function () {
 
     Route::get("/user/detail/{id}", [UserController::class,"getUser"]);
+    Route::put("/user/detail/{id}", [UserController::class,"updateUser"]);
     Route::get("signOut", [AuthController::class,"signOut"]);
 });
