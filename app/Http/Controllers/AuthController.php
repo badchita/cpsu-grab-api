@@ -15,14 +15,14 @@ class AuthController extends Controller
     public function signUp(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'firstName' => 'required|string|max:255',
-            'middleName' => 'nullable|string|max:255',
-            'lastName' => 'required|string|max:255',
+            // 'firstName' => 'required|string|max:255',
+            // 'middleName' => 'nullable|string|max:255',
+            // 'lastName' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'contactNumber' => 'required|string',
+            // 'contactNumber' => 'required|string',
             'userType' => 'string|max:255',
-            'dateOfBirth' => 'string|max:255',
+            // 'dateOfBirth' => 'string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -31,13 +31,13 @@ class AuthController extends Controller
 
         $users = new User();
 
-        $users->first_name = $request->firstName;
-        $users->middle_name = $request->middleName;
-        $users->last_name = $request->lastName;
+        // $users->first_name = $request->firstName;
+        // $users->middle_name = $request->middleName;
+        // $users->last_name = $request->lastName;
         $users->email = $request->email;
-        $users->contact_number = $request->contactNumber;
-        $users->date_of_birth = $request->dateOfBirth;
-        $users->gender = $request->gender;
+        // $users->contact_number = $request->contactNumber;
+        // $users->date_of_birth = $request->dateOfBirth;
+        // $users->gender = $request->gender;
         $users->password = $request->password;
         $users->user_type = $request->userType;
         $users->status = 'Pending';

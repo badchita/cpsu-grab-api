@@ -29,6 +29,7 @@ class UsersResource extends JsonResource
             'contactNumber' => $this->contact_number,
             'dateOfBirth' => $this->date_of_birth,
             'gender' => $this->gender,
+            'isOnboarded' => $this->is_onboarded,
         ];
     }
 }

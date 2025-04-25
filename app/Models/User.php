@@ -30,6 +30,7 @@ class User extends Authenticatable
         'date_of_birth',
         'status',
         'gender',
+        'is_onboarded',
     ];
 
     /**
