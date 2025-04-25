@@ -33,4 +33,17 @@ class UserController extends Controller
         ];
         return response($response, $this->status);
     }
+
+    public function onBoardUser($id)
+    {
+        $user = User::where('id', $id)->first();
+        $user->is_onboarded = true;
+        $user->save();
+
+        $response = [
+            'message' => 'User is onboarded',
+            'status' => $this->status
+        ];
+        return response($response, $this->status);
+    }
 }
