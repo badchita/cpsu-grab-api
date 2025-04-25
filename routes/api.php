@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Route;
 Route::post("/signUp", [AuthController::class, "signUp"]);
 Route::post("/signIn", [AuthController::class, "signIn"]);
 
-Route::group(["middleware"=> ["auth:sanctum"]], function () {
+Route::group(["middleware" => ["auth:sanctum"]], function () {
 
-    Route::get("/user/detail/{id}", [UserController::class,"getUser"]);
-    Route::get("signOut", [AuthController::class,"signOut"]);
+    Route::get("/user/detail/{id}", [UserController::class, "getUser"]);
+    Route::put("/user/detail/{id}", [UserController::class, "updateUser"]);
+    Route::post("/user/detail/onboard/{id}", [UserController::class, "onBoardUser"]);
+    Route::get("signOut", [AuthController::class, "signOut"]);
 });
