@@ -30,6 +30,21 @@ class UsersResource extends JsonResource
             'dateOfBirth' => $this->date_of_birth,
             'gender' => $this->gender,
             'isOnboarded' => $this->is_onboarded,
+            'address' => $this->whenLoaded('address', function () {
+                return [
+                    'id' => $this->address->id,
+                    'street' => $this->address->street,
+                    'barangay' => $this->address->barangay,
+                    'city' => $this->address->city,
+                    'province' => $this->address->province,
+                    'postalCode' => $this->address->postal_code,
+                    'country' => $this->address->country,
+                    'building' => $this->address->building,
+                    'landmark' => $this->address->landmark,
+                    'latitude' => $this->address->latitude,
+                    'longitude' => $this->address->longitude,
+                ];
+            }),
         ];
     }
 }
