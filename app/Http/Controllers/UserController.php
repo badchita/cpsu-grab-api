@@ -11,8 +11,13 @@ class UserController extends Controller
     private $status = 200;
     public function getUser($id)
     {
-        $user = User::find($id);
-        $data = new UsersResource(new UsersResource($user));
+        $user = User::with('address')->find($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $data = new UsersResource($user);
         return response($data, $this->status);
     }
 
