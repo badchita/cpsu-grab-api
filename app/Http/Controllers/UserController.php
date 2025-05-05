@@ -20,23 +20,35 @@ class UserController extends Controller
         $data = new UsersResource($user);
         return response($data, $this->status);
     }
-
-    public function updateUser(Request $request)
+    public function update(Request $request)
     {
-        User::where(['id' => $request->id])->update([
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
-            'middle_name' => $request->middleName,
-            'date_of_birth' => $request->dateOfdateOfBirthBirth,
-            'gender' => $request->gender,
+        $user = User::findOrFail($request->id);
+
+        // Update user fields
+        $user->update([
+            'first_name'     => $request->firstName,
+            'last_name'      => $request->lastName,
+            'middle_name'    => $request->middleName,
+            'date_of_birth'  => $request->dateOfBirth,
+            'gender'         => $request->gender,
             'contact_number' => $request->contactNumber,
         ]);
 
-        $response = [
-            'message' => 'User Information Saved',
+        // Handle nested address
+        if ($request->has('address')) {
+            $addressData = $request->input('address');
+
+            if ($user->address) {
+                $user->address->update($addressData);
+            } else {
+                $user->address()->create($addressData);
+            }
+        }
+
+        return response([
+            'message' => 'User information updated successfully.',
             'status' => $this->status
-        ];
-        return response($response, $this->status);
+        ], $this->status);
     }
 
     public function onBoardUser($id)
