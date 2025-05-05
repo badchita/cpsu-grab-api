@@ -10,9 +10,9 @@ Route::post("/signIn", [AuthController::class, "signIn"]);
 
 Route::group(["middleware" => ["auth:sanctum"]], function () {
 
-    Route::get("/user/detail/{id}", [UserController::class, "getUser"]);
+    Route::get("/user/{id}", [UserController::class, "show"]);
     Route::put("/user/{id}", [UserController::class, "update"]);
-    Route::post("/user/detail/onboard/{id}", [UserController::class, "onBoardUser"]);
+    Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
 
     Route::post("/address", [AddressController::class, "store"]);
 

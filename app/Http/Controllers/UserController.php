@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     private $status = 200;
-    public function getUser($id)
+    public function show($id)
     {
         $user = User::with('address')->find($id);
 
@@ -63,7 +63,7 @@ class UserController extends Controller
         ], $this->status);
     }
 
-    public function onBoardUser($id)
+    public function onBoard($id)
     {
         $user = User::where('id', $id)->first();
         $user->is_onboarded = true;
