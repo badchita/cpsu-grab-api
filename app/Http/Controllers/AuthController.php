@@ -59,6 +59,7 @@ class AuthController extends Controller
                     "token" => $token,
                     "userId" => $user->id,
                     "isOnboarded" => (bool) $user->is_onboarded,
+                    "userType" => $user->user_type,
                 ]);
             } else {
                 return response()->json([
