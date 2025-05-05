@@ -2,10 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Addresses;
-use App\Models\Parents;
-use App\Models\Subjects;
-use App\Models\Teachers;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UsersResource extends JsonResource
