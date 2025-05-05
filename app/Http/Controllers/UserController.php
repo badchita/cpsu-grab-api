@@ -11,7 +11,7 @@ class UserController extends Controller
     private $status = 200;
     public function show($id)
     {
-        $user = User::with('address')->find($id);
+        $user = User::with(['address', 'restaurant'])->find($id);
 
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
@@ -61,7 +61,7 @@ class UserController extends Controller
             $restaurantData = [
                 'name'        => $restaurantPayload['name'] ?? null,
                 'description' => $restaurantPayload['description'] ?? null,
-                'status'      => $restaurantPayload['status'] ?? 'active',
+                'status'      => $restaurantPayload['status'] ?? 'ACTIVE',
             ];
 
             if ($user->restaurant) {

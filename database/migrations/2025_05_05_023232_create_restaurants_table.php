@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('restaurants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // owner
-            $table->string('name');
+            $table->unsignedBigInteger('user_id');
+            $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->string('status')->default('active');
+            $table->string('status')->default('ACTIVE');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
