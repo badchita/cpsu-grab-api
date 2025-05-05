@@ -56,6 +56,21 @@ class UserController extends Controller
             }
         }
 
+        if ($request->has('restaurant')) {
+            $restaurantPayload = $request->input('restaurant');
+            $restaurantData = [
+                'name'        => $restaurantPayload['name'] ?? null,
+                'description' => $restaurantPayload['description'] ?? null,
+                'status'      => $restaurantPayload['status'] ?? 'active',
+            ];
+
+            if ($user->restaurant) {
+                $user->restaurant->update($restaurantData);
+            } else {
+                $user->restaurant()->create($restaurantData);
+            }
+        }
+
 
         return response([
             'message' => 'User information updated successfully.',
