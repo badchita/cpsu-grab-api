@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('province')->nullable();
             $table->string('postal_code')->nullable();
-            $table->string('country')->default('PHILIPPINES');
+            $table->string('country')->nullable();
             $table->string('building')->nullable();
             $table->string('landmark')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();

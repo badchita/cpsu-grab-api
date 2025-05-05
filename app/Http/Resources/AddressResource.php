@@ -22,7 +22,7 @@ class AddressResource extends JsonResource
             'barangay' => $this->barangay,
             'city' => $this->city,
             'province' => $this->province,
-            'postal_code' => $this->postal_code,
+            'postal_code' => $this->postalCode,
             'country' => $this->country,
             'building' => $this->building,
             'landmark' => $this->landmark,

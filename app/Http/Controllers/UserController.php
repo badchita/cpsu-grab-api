@@ -20,23 +20,47 @@ class UserController extends Controller
         $data = new UsersResource($user);
         return response($data, $this->status);
     }
-
-    public function updateUser(Request $request)
+    public function update(Request $request)
     {
-        User::where(['id' => $request->id])->update([
-            'first_name' => $request->firstName,
-            'last_name' => $request->lastName,
-            'middle_name' => $request->middleName,
-            'date_of_birth' => $request->dateOfdateOfBirthBirth,
-            'gender' => $request->gender,
+        $user = User::findOrFail($request->id);
+
+        $user->update([
+            'first_name'     => $request->firstName,
+            'last_name'      => $request->lastName,
+            'middle_name'    => $request->middleName,
+            'date_of_birth'  => $request->dateOfBirth,
+            'gender'         => $request->gender,
             'contact_number' => $request->contactNumber,
         ]);
 
-        $response = [
-            'message' => 'User Information Saved',
+        if ($request->has('address')) {
+            $addressPayload = $request->input('address');
+
+            $addressData = [
+                'street'      => $addressPayload['street'] ?? null,
+                'barangay'    => $addressPayload['barangay'] ?? null,
+                'city'        => $addressPayload['city'] ?? null,
+                'province'    => $addressPayload['province'] ?? null,
+                'postal_code' => $addressPayload['postalCode'] ?? null,
+                'country'     => $addressPayload['country'] ?? null,
+                'building'    => $addressPayload['building'] ?? null,
+                'landmark'    => $addressPayload['landmark'] ?? null,
+                'latitude'    => $addressPayload['latitude'] ?? null,
+                'longitude'   => $addressPayload['longitude'] ?? null,
+            ];
+
+            if ($user->address) {
+                $user->address->update($addressData);
+            } else {
+                $user->address()->create($addressData);
+            }
+        }
+
+
+        return response([
+            'message' => 'User information updated successfully.',
             'status' => $this->status
-        ];
-        return response($response, $this->status);
+        ], $this->status);
     }
 
     public function onBoardUser($id)
