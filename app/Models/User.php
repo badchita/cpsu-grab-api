@@ -61,4 +61,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Address::class);
     }
+
+    public function restaurant()
+    {
+        return $this->hasOne(Restaurant::class);
+    }
 }

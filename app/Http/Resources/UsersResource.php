@@ -2,10 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Addresses;
-use App\Models\Parents;
-use App\Models\Subjects;
-use App\Models\Teachers;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UsersResource extends JsonResource
@@ -43,6 +39,14 @@ class UsersResource extends JsonResource
                     'landmark' => $this->address->landmark,
                     'latitude' => $this->address->latitude,
                     'longitude' => $this->address->longitude,
+                ];
+            }),
+            'restaurant'     => $this->whenLoaded('restaurant', function () {
+                return [
+                    'id'          => $this->restaurant->id,
+                    'name'        => $this->restaurant->name,
+                    'description' => $this->restaurant->description,
+                    'status'      => $this->restaurant->status,
                 ];
             }),
         ];
