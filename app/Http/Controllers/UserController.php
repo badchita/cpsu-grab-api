@@ -24,7 +24,6 @@ class UserController extends Controller
     {
         $user = User::findOrFail($request->id);
 
-        // Update user fields
         $user->update([
             'first_name'     => $request->firstName,
             'last_name'      => $request->lastName,
@@ -34,9 +33,21 @@ class UserController extends Controller
             'contact_number' => $request->contactNumber,
         ]);
 
-        // Handle nested address
         if ($request->has('address')) {
-            $addressData = $request->input('address');
+            $addressPayload = $request->input('address');
+
+            $addressData = [
+                'street'      => $addressPayload['street'] ?? null,
+                'barangay'    => $addressPayload['barangay'] ?? null,
+                'city'        => $addressPayload['city'] ?? null,
+                'province'    => $addressPayload['province'] ?? null,
+                'postal_code' => $addressPayload['postalCode'] ?? null,
+                'country'     => $addressPayload['country'] ?? null,
+                'building'    => $addressPayload['building'] ?? null,
+                'landmark'    => $addressPayload['landmark'] ?? null,
+                'latitude'    => $addressPayload['latitude'] ?? null,
+                'longitude'   => $addressPayload['longitude'] ?? null,
+            ];
 
             if ($user->address) {
                 $user->address->update($addressData);
@@ -44,6 +55,7 @@ class UserController extends Controller
                 $user->address()->create($addressData);
             }
         }
+
 
         return response([
             'message' => 'User information updated successfully.',
