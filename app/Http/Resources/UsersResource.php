@@ -44,6 +44,7 @@ class UsersResource extends JsonResource
             'restaurant'     => $this->whenLoaded('restaurant', function () {
                 return [
                     'id'          => $this->restaurant->id,
+                    'userId'      => $this->restaurant->user_id,
                     'name'        => $this->restaurant->name,
                     'description' => $this->restaurant->description,
                     'status'      => $this->restaurant->status,

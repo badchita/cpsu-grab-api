@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 class RestaurantController extends Controller
 {
+    private $status = 200;
     /**
      * Display a listing of the resource.
      */
@@ -50,9 +51,20 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Restaurant $restaurant)
+    public function update(Request $request)
     {
-        //
+        $restaurant = Restaurant::findOrFail($request->id);
+
+        $restaurant->update([
+            'name'     => $request->name,
+            'description'      => $request->description,
+            'status'    => $request->status,
+        ]);
+
+        return response([
+            'message' => 'Restaurant information updated successfully.',
+            'status' => $this->status
+        ], $this->status);
     }
 
     /**
