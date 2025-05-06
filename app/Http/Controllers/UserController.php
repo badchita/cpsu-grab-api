@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         $user = User::with(['address', 'restaurant'])->find($id);
 
-        if (!$user) {
+    if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 

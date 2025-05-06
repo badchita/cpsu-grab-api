@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,9 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
 
     Route::post("/address", [AddressController::class, "store"]);
+
+    Route::put("/restaurant/{id}", [RestaurantController::class, "update"]);
+
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
