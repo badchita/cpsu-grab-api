@@ -28,8 +28,9 @@ class ProductController extends Controller
             'category'     => 'required|in:MAIN_DISH,SIDE_DISH,BEVERAGE,DESSERT',
             'type'         => 'required|string|max:100',
             'price'        => 'required|numeric|min:0',
+            'quantity'     => 'required|integer|min:0',
             'description'  => 'nullable|string',
-            'image'        => 'nullable|string|max:255', // or use image upload logic
+            'image'        => 'nullable|string|max:255',
             'restaurantId' => 'required|exists:restaurants,id',
         ]);
 
