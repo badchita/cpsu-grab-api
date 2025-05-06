@@ -7,30 +7,23 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Restaurant extends Authenticatable
+class Product extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'user_id',
+        'id',
         'name',
+        'category',
+        'type',
+        'price',
         'description',
-        'status',
+        'image',
     ];
 
-    public function owner()
+    public function restaurant()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function products()
-    {
-        return $this->hasMany(Product::class);
+        return $this->belongsTo(Restaurant::class);
     }
 }

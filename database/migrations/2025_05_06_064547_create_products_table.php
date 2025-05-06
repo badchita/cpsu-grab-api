@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('restaurant_id');
             // $table->unsignedBigInteger('order_id')->nullable();
             $table->string('name');
-            $table->enum('category', ['MAIN_DISH', 'SIDE_DISH', 'BEVERAGE']);
+            $table->enum('category', ['MAIN_DISH', 'SIDE_DISH', 'BEVERAGE', 'DESSERT']);
             $table->string('type');
             $table->decimal('price', 8, 2);
             $table->text('description')->nullable();
