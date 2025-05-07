@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -59,15 +60,38 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product = Product::with(['restaurant.owner'])->find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        $response = new ProductResource($product);
+
+        return response($response, $this->status);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $product = Product::findOrFail($request->id);
+
+        $product->update([
+            'name'     => $request->name,
+            'description'      => $request->description,
+            'category'    => $request->category,
+            'type'    => $request->type,
+            'price'    => $request->price,
+            'quantity'    => $request->quantity,
+            'image'    => $request->image,
+            'restaurant_id'    => $request->restaurantId,
+        ]);
+
+        $response = $product;
+
+        return response($response, $this->status);
     }
 
     /**

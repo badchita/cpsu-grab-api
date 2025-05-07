@@ -61,10 +61,9 @@ class RestaurantController extends Controller
             'status'    => $request->status,
         ]);
 
-        return response([
-            'message' => 'Restaurant information updated successfully.',
-            'status' => $this->status
-        ], $this->status);
+        $response = $restaurant;
+
+        return response($response, $this->status);
     }
 
     /**
