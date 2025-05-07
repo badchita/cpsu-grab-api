@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\UsersResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class UserController extends Controller
     {
         $user = User::with(['address', 'restaurant'])->find($id);
 
-    if (!$user) {
+        if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 
@@ -89,5 +90,18 @@ class UserController extends Controller
             'status' => $this->status
         ];
         return response($response, $this->status);
+    }
+
+    public function getOwnerProducts($userId)
+    {
+        $user = User::with('restaurant.products')->find($userId);
+
+        if (!$user || !$user->restaurant) {
+            return response()->json(['message' => 'Restaurant or user not found.'], 404);
+        }
+
+        $products = $user->restaurant->products;
+
+        return ProductResource::collection($products);
     }
 }
