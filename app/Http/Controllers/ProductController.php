@@ -43,15 +43,13 @@ class ProductController extends Controller
         $product->category = $request->category;
         $product->type = $request->type;
         $product->price = $request->price;
+        $product->quantity = $request->quantity;
         $product->description = $request->description;
         $product->image = $request->image;
         $product->restaurant_id = $request->restaurantId;
         $product->save();
 
-        $response = [
-            'message' => 'Product Added!',
-            'status' => $this->status
-        ];
+        $response = $product;
 
         return response($response, $this->status);
     }
