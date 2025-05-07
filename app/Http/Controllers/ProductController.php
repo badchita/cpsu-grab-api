@@ -66,7 +66,9 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
-        return new ProductResource($product);
+        $response = new ProductResource($product);
+
+        return response($response, $this->status);
     }
 
     /**
@@ -84,6 +86,7 @@ class ProductController extends Controller
             'price'    => $request->price,
             'quantity'    => $request->quantity,
             'image'    => $request->image,
+            'restaurant_id'    => $request->restaurantId,
         ]);
 
         $response = $product;
