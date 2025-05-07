@@ -92,16 +92,37 @@ class UserController extends Controller
         return response($response, $this->status);
     }
 
-    public function getOwnerProducts($userId)
+    public function getOwnerProducts(Request $request, $userId)
     {
-        $user = User::with('restaurant.products')->find($userId);
+        $user = User::with('restaurant')->find($userId);
 
         if (!$user || !$user->restaurant) {
-            return response()->json(['message' => 'Restaurant or user not found.'], 404);
+            return response()->json(['message' => 'User or restaurant not found.'], 404);
         }
 
-        $products = $user->restaurant->products;
+        $query = $user->restaurant->products();
 
-        return ProductResource::collection($products);
+        if ($request->has('name')) {
+            $query->where('name', 'like', $request->name . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $size = $request->get('size', 10);
+        $products = $query->orderBy('created_at', 'DESC')->paginate($size);
+
+        return response([
+            'data' => ProductResource::collection($products->items()),
+            'currentPage' => $products->currentPage(),
+            'totalPages' => $products->lastPage(),
+            'totalItems' => $products->total(),
+            'status' => 200
+        ]);
     }
 }
