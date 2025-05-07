@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProductResource;
 use App\Http\Resources\UsersResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class UserController extends Controller
     {
         $user = User::with(['address', 'restaurant'])->find($id);
 
-    if (!$user) {
+        if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
 
@@ -89,5 +90,39 @@ class UserController extends Controller
             'status' => $this->status
         ];
         return response($response, $this->status);
+    }
+
+    public function getOwnerProducts(Request $request, $userId)
+    {
+        $user = User::with('restaurant')->find($userId);
+
+        if (!$user || !$user->restaurant) {
+            return response()->json(['message' => 'User or restaurant not found.'], 404);
+        }
+
+        $query = $user->restaurant->products();
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', $request->name . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $size = $request->get('size', 10);
+        $products = $query->orderBy('created_at', 'DESC')->paginate($size);
+
+        return response([
+            'data' => ProductResource::collection($products->items()),
+            'currentPage' => $products->currentPage(),
+            'totalPages' => $products->lastPage(),
+            'totalItems' => $products->total(),
+            'status' => 200
+        ]);
     }
 }

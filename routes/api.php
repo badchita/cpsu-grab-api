@@ -15,6 +15,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get("/user/{id}", [UserController::class, "show"]);
     Route::put("/user/{id}", [UserController::class, "update"]);
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
+    Route::get("/user/ownerProducts/{id}", [UserController::class, "getOwnerProducts"]);
 
     Route::post("/address", [AddressController::class, "store"]);
 
