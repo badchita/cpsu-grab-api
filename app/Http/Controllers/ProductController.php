@@ -14,9 +14,32 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Product::with('restaurant');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', $request->name . '%');
+        }
+
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $size = $request->get('size', 10);
+        $products = $query->orderBy('created_at', 'DESC')->paginate($size);
+
+        return response([
+            'data' => ProductResource::collection($products->items()),
+            'currentPage' => $products->currentPage(),
+            'totalPages' => $products->lastPage(),
+            'totalItems' => $products->total(),
+            'status' => 200
+        ]);
     }
 
     /**
