@@ -19,6 +19,7 @@ class Cart extends Authenticatable
      */
 
     protected $fillable = [
+        'id',
         'user_id',
         'product_id',
         'quantity',
