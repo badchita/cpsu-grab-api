@@ -21,33 +21,22 @@ class CartController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'user_id'   => 'required|exists:users,id',
-            'products'  => 'required|array|min:1',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.quantity'   => 'required|integer|min:1',
+            'user_id'    => 'required|exists:users,id',
+            'product_id' => 'required|exists:products,id',
+            'quantity'   => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()], 422);
         }
 
-        $userId = $request->user_id;
-        $addedItems = [];
+        $cartItem = Cart::updateOrCreate(
+            ['user_id' => $request->user_id, 'product_id' => $request->product_id],
+            ['quantity' => $request->quantity]
+        );
 
-        foreach ($request->products as $item) {
-            $cartItem = Cart::updateOrCreate(
-                [
-                    'user_id' => $userId,
-                    'product_id' => $item['product_id']
-                ],
-                [
-                    'quantity' => $item['quantity']
-                ]
-            );
-            $addedItems[] = $cartItem;
-        }
+        $response = $cartItem;
 
-        $response = $addedItems;
         return response($response, $this->status);
     }
 
