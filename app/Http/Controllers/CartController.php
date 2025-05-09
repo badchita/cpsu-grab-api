@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CartResource;
 use App\Models\Cart;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,13 +29,25 @@ class CartController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response(['errors' => $validator->errors()], 422);
+            return response(['errors' => $validator->errors()->all()], 422);
         }
 
-        $cartItem = Cart::updateOrCreate(
-            ['user_id' => $request->userId, 'product_id' => $request->productId],
-            ['quantity' => $request->quantity]
-        );
+        $cartItem = Cart::where('user_id', $request->userId)
+            ->where('product_id', $request->productId)
+            ->where('is_checked_out', false)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->quantity += $request->quantity;
+            $cartItem->save();
+        } else {
+            $cartItem = Cart::create([
+                'user_id'    => $request->userId,
+                'product_id' => $request->productId,
+                'quantity'   => $request->quantity,
+            ]);
+
+        }
 
         $response = $cartItem;
 
@@ -56,5 +70,19 @@ class CartController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getUserCarts($userId)
+    {
+        $user = User::with('carts.product')->find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response([
+            'data' => CartResource::collection($user->carts),
+            'status' => 200
+        ]);
     }
 }
