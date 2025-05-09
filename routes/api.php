@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserController;
@@ -25,6 +26,8 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/product", [ProductController::class, "store"]);
     Route::get("/product/{id}", [ProductController::class, "show"]);
     Route::put("/product/{id}", [ProductController::class, "update"]);
+
+    Route::post("/cart", [CartController::class, "store"]);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
