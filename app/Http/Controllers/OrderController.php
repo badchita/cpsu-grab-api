@@ -54,9 +54,11 @@ class OrderController extends Controller
 
             if ($cart) {
                 $cart->is_checked_out = true;
+                $cart->order_id = $order->id;
                 $cart->save();
             }
         }
+
 
         $order->load([
             'customer',
