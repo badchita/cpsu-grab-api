@@ -46,7 +46,6 @@ class CartController extends Controller
                 'product_id' => $request->productId,
                 'quantity'   => $request->quantity,
             ]);
-
         }
 
         $response = $cartItem;
@@ -72,7 +71,7 @@ class CartController extends Controller
         //
     }
 
-    public function getUserCarts($userId)
+    public function getUserCart($userId)
     {
         $user = User::with('carts.product')->find($userId);
 
@@ -80,9 +79,8 @@ class CartController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        return response([
-            'data' => CartResource::collection($user->carts),
-            'status' => 200
-        ]);
+        $response = CartResource::collection($user->carts);
+
+        return response($response, $this->status);
     }
 }
