@@ -27,7 +27,6 @@ class CartController extends Controller
             'productId' => 'required|exists:products,id',
             'restaurantId' => 'required|exists:restaurants,id',
             'quantity'   => 'required|integer|min:1',
-
         ]);
 
         if ($validator->fails()) {
