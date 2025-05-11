@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade'); // New
+            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
 
             $table->integer('quantity')->default(1);
@@ -23,9 +23,8 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Remove this unique constraint if multiple same products can be added
-            // but instead use a validation logic when adding
-            $table->unique(['user_id', 'product_id', 'is_checked_out']);
+            // Prevent duplicate carts for the same user-product when not yet checked out
+            $table->unique(['user_id', 'product_id', 'is_checked_out'], 'carts_user_id_product_id_is_checked_out_unique');
         });
     }
 
