@@ -25,7 +25,9 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'userId'    => 'required|exists:users,id',
             'productId' => 'required|exists:products,id',
+            'restaurantId' => 'required|exists:restaurants,id',
             'quantity'   => 'required|integer|min:1',
+
         ]);
 
         if ($validator->fails()) {
@@ -44,6 +46,7 @@ class CartController extends Controller
             $cartItem = Cart::create([
                 'user_id'    => $request->userId,
                 'product_id' => $request->productId,
+                'restaurant_id' => $request->restaurantId,
                 'quantity'   => $request->quantity,
             ]);
         }
@@ -97,8 +100,8 @@ class CartController extends Controller
         }
 
         return response([
-            'restaurant_id' => $restaurantIds->first(),
-            'items' => CartResource::collection($filteredCarts)
+            'restaurantId' => $restaurantIds->first(),
+            'carts' => CartResource::collection($filteredCarts)
         ], $this->status);
     }
 
