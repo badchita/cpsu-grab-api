@@ -83,4 +83,28 @@ class CartController extends Controller
 
         return response($response, $this->status);
     }
+
+    public function updateCartQuantities(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'items' => 'required|array',
+            'items.*.cartId' => 'required|exists:carts,id',
+            'items.*.quantity' => 'required|integer|min:1'
+        ]);
+
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()->all()], 422);
+        }
+
+        foreach ($request->items as $item) {
+            Cart::where('id', $item['cartId'])->update([
+                'quantity' => $item['quantity']
+            ]);
+        }
+
+        return response([
+            'message' => 'Cart quantities updated successfully.',
+            'status' => 200
+        ]);
+    }
 }
