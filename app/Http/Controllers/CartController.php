@@ -25,7 +25,9 @@ class CartController extends Controller
         $validator = Validator::make($request->all(), [
             'userId'    => 'required|exists:users,id',
             'productId' => 'required|exists:products,id',
+            'restaurantId' => 'required|exists:restaurants,id',
             'quantity'   => 'required|integer|min:1',
+
         ]);
 
         if ($validator->fails()) {
@@ -44,6 +46,7 @@ class CartController extends Controller
             $cartItem = Cart::create([
                 'user_id'    => $request->userId,
                 'product_id' => $request->productId,
+                'restaurant_id' => $request->restaurantId,
                 'quantity'   => $request->quantity,
             ]);
         }
@@ -73,15 +76,33 @@ class CartController extends Controller
 
     public function getUserCart($userId)
     {
-        $user = User::with('carts.product')->find($userId);
+        $user = User::with(['carts' => function ($query) {
+            $query->where('is_checked_out', false)->with('product.restaurant');
+        }])->find($userId);
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $response = CartResource::collection($user->carts);
+        $restaurantIds = $user->carts
+            ->pluck('product.restaurant_id')
+            ->unique()
+            ->filter();
 
-        return response($response, $this->status);
+        if ($restaurantIds->count() > 1) {
+            $firstRestaurantId = $restaurantIds->first();
+
+            $filteredCarts = $user->carts->filter(function ($cart) use ($firstRestaurantId) {
+                return $cart->product->restaurant_id == $firstRestaurantId;
+            })->values();
+        } else {
+            $filteredCarts = $user->carts;
+        }
+
+        return response([
+            'restaurantId' => $restaurantIds->first(),
+            'carts' => CartResource::collection($filteredCarts)
+        ], $this->status);
     }
 
     public function updateCartQuantities(Request $request)

@@ -13,12 +13,19 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade'); // New
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+
             $table->integer('quantity')->default(1);
             $table->boolean('is_checked_out')->default(false);
+
             $table->timestamps();
-            $table->unique(['user_id', 'product_id']);
+
+            // Remove this unique constraint if multiple same products can be added
+            // but instead use a validation logic when adding
+            $table->unique(['user_id', 'product_id', 'is_checked_out']);
         });
     }
 
