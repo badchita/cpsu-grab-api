@@ -23,6 +23,8 @@ class Cart extends Authenticatable
         'user_id',
         'product_id',
         'quantity',
+        'is_checked_out',
+        'restaurant_id',
     ];
 
     public function user()
@@ -33,5 +35,10 @@ class Cart extends Authenticatable
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function restaurant()
+    {
+        return $this->belongsTo(Restaurant::class);
     }
 }

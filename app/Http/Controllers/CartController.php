@@ -73,15 +73,33 @@ class CartController extends Controller
 
     public function getUserCart($userId)
     {
-        $user = User::with('carts.product')->find($userId);
+        $user = User::with(['carts' => function ($query) {
+            $query->where('is_checked_out', false)->with('product.restaurant');
+        }])->find($userId);
 
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        $response = CartResource::collection($user->carts);
+        $restaurantIds = $user->carts
+            ->pluck('product.restaurant_id')
+            ->unique()
+            ->filter();
 
-        return response($response, $this->status);
+        if ($restaurantIds->count() > 1) {
+            $firstRestaurantId = $restaurantIds->first();
+
+            $filteredCarts = $user->carts->filter(function ($cart) use ($firstRestaurantId) {
+                return $cart->product->restaurant_id == $firstRestaurantId;
+            })->values();
+        } else {
+            $filteredCarts = $user->carts;
+        }
+
+        return response([
+            'restaurant_id' => $restaurantIds->first(),
+            'items' => CartResource::collection($filteredCarts)
+        ], $this->status);
     }
 
     public function updateCartQuantities(Request $request)
