@@ -90,4 +90,22 @@ class OrderController extends Controller
     {
         //
     }
+
+    public function getVendorOrders($vendorId)
+    {
+        $orders = Order::where('vendor_id', $vendorId)
+            ->with([
+                'customer',
+                'vendor',
+                'restaurant',
+                'driver',
+                'carts.product'
+            ])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $response = OrderResource::collection($orders);
+
+        return response($response, 200);
+    }
 }
