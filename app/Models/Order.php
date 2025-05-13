@@ -19,6 +19,7 @@ class Order extends Authenticatable
      */
 
     protected $fillable = [
+        'order_reference_number',
         'customer_id',
         'vendor_id',
         'driver_id',

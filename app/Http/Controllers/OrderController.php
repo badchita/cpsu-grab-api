@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -39,7 +40,13 @@ class OrderController extends Controller
             ], 422);
         }
 
+        $orderRef = strtoupper('ORD' . Str::random(10));
+        while (Order::where('order_reference_number', $orderRef)->exists()) {
+            $orderRef = strtoupper('ORD' . Str::random(10));
+        }
+
         $order = Order::create([
+            'order_reference_number' => $orderRef,
             'customer_id'   => $request->customerId,
             'vendor_id'     => $request->vendorId,
             'restaurant_id' => $request->restaurantId,
