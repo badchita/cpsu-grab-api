@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Prevent duplicate carts for the same user-product when not yet checked out
-            $table->unique(['user_id', 'product_id', 'is_checked_out'], 'carts_user_id_product_id_is_checked_out_unique');
+            $table->unique(['user_id', 'product_id'], 'carts_user_id_product_id_is_checked_out_unique');
         });
     }
 
