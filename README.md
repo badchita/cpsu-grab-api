@@ -35,7 +35,7 @@ https://getcomposer.org/download/
 10. open '.env' file and find 'DB_DATABASE=laravel' and replace it to 'DB_DATABASE=cpsu-grab-api' then save
 11. go back to command prompt
 12. type 'php artisan migrate:fresh'
-13. type 'php artisan make:seeder AdminUserSeeder'
+13. type 'php artisan db:seed --class=AdminUserSeeder'
 14. type 'php artisan serve'
 
 (After pulling changes from repository)
