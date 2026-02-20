@@ -14,17 +14,32 @@ return new class extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('restaurant_id')->constrained('restaurants')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('restaurant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('product_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
+            $table->foreignId('order_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->integer('quantity')->default(1);
             $table->boolean('is_checked_out')->default(false);
 
             $table->timestamps();
 
-            // Prevent duplicate carts for the same user-product when not yet checked out
-            $table->unique(['user_id', 'product_id'], 'carts_user_id_product_id_is_checked_out_unique');
+            $table->unique(
+                ['user_id', 'product_id', 'is_checked_out'],
+                'carts_unique_active_item'
+            );
         });
     }
 

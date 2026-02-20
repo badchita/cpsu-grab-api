@@ -13,11 +13,28 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('vendor_id');
-            $table->unsignedBigInteger('driver_id')->nullable();
-            $table->unsignedBigInteger('restaurant_id');
+
+            $table->string('order_reference_number')->unique();
+
+            $table->foreignId('customer_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('vendor_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
+
+            $table->foreignId('driver_id')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('restaurant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->decimal('total_payment', 10, 2);
+
             $table->enum('order_status', [
                 'PENDING',
                 'ACCEPTED',
@@ -28,11 +45,8 @@ return new class extends Migration
                 'DELIVERED',
                 'CANCELLED',
             ])->default('PENDING');
+
             $table->timestamps();
-            $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('vendor_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('driver_id')->references('id')->on('users')->onDelete('set null');
-            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
         });
     }
 

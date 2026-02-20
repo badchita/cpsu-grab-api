@@ -13,18 +13,20 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('restaurant_id');
-            // $table->unsignedBigInteger('order_id')->nullable();
+
+            $table->foreignId('restaurant_id')
+                ->constrained()
+                ->cascadeOnDelete();
+
             $table->string('name');
             $table->enum('category', ['MAIN_DISH', 'SIDE_DISH', 'BEVERAGE', 'DESSERT']);
             $table->string('type');
             $table->decimal('price', 8, 2);
+            $table->integer('quantity')->default(0);
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->timestamps();
 
-            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
-            // $table->foreign('order_id')->references('id')->on('orders')->onDelete('set null');
+            $table->timestamps();
         });
     }
 
