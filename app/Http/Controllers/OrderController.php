@@ -19,11 +19,11 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $query = Order::with([
-            'customer:id,first_name,last_name,email',
-            'vendor:id,first_name,last_name,email',
-            'driver:id,first_name,last_name,email',
-            'restaurant:id,name',
-            'carts.product:id,name,price,image'
+            'customer',
+            'vendor',
+            'driver',
+            'restaurant',
+            'carts.product'
         ]);
 
         // Filter by order status
