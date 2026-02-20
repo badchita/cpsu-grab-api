@@ -16,11 +16,63 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request) {}
+    public function index(Request $request)
+    {
+        $query = Order::with([
+            'customer',
+            'vendor',
+            'driver',
+            'restaurant',
+            'carts.product'
+        ]);
+
+        // Filter by order status
+        if ($request->filled('order_status')) {
+            $query->where('order_status', $request->order_status);
+        }
+
+        // Filter by order reference
+        if ($request->filled('order_reference_number')) {
+            $query->where('order_reference_number', 'like', '%' . $request->order_reference_number . '%');
+        }
+
+        // Filter by customer
+        if ($request->filled('customer_id')) {
+            $query->where('customer_id', $request->customer_id);
+        }
+
+        // Filter by restaurant
+        if ($request->filled('restaurant_id')) {
+            $query->where('restaurant_id', $request->restaurant_id);
+        }
+
+        // Optional date filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('created_at', [
+                $request->from_date . ' 00:00:00',
+                $request->to_date . ' 23:59:59'
+            ]);
+        }
+
+        $size = $request->get('size', 10);
+
+        $orders = $query
+            ->orderBy('created_at', 'DESC')
+            ->paginate($size);
+
+        return response([
+            'data' => OrderResource::collection($orders->items()),
+            'currentPage' => $orders->currentPage(),
+            'totalPages' => $orders->lastPage(),
+            'totalItems' => $orders->total(),
+            'status' => 200
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
-     */ public function store(Request $request)
+     */
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'customerId'    => 'required|exists:users,id',

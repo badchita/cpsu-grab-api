@@ -15,16 +15,19 @@ class OrderResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'             => $this->id,
-            'totalPayment'   => $this->total_payment,
-            'orderStatus'    => $this->order_status,
-            'customer'       => new UsersResource($this->whenLoaded('customer')),
-            'vendor'         => new UsersResource($this->whenLoaded('vendor')),
-            'driver'         => new UsersResource($this->whenLoaded('driver')),
-            'restaurant'     => new RestaurantResource($this->whenLoaded('restaurant')),
-            'carts'          => CartResource::collection($this->whenLoaded('carts')),
-            'createdAt'      => $this->created_at,
-            'updatedAt'      => $this->updated_at,
+            'id'           => $this->id,
+            'orderReferenceNumber' => $this->order_reference_number,
+            'totalPayment' => $this->total_payment,
+            'orderStatus'  => $this->order_status,
+
+            'customer'  => UsersResource::make($this->whenLoaded('customer')),
+            'vendor'    => UsersResource::make($this->whenLoaded('vendor')),
+            'driver'    => UsersResource::make($this->whenLoaded('driver')),
+            'restaurant' => RestaurantResource::make($this->whenLoaded('restaurant')),
+            'carts'     => CartResource::collection($this->whenLoaded('carts')),
+
+            'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

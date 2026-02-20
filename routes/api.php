@@ -33,6 +33,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get("/cart/user/{id}", [CartController::class, "getUserCart"]);
     Route::put("/cart/quantities", [CartController::class, "updateCartQuantities"]);
 
+    Route::get("/order", [OrderController::class, "index"]);
     Route::post("/order", [OrderController::class, "store"]);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
