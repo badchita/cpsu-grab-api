@@ -46,6 +46,10 @@ class OrderController extends Controller
             $query->where('restaurant_id', $request->restaurantId);
         }
 
+        if ($request->filled('driverId')) {
+            $query->where('driver_id', $request->driverId);
+        }
+
         // Optional date filter
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $query->whereBetween('created_at', [
@@ -148,6 +152,42 @@ class OrderController extends Controller
 
         $order->update([
             'order_status' => $request->orderStatus
+        ]);
+
+        return response()->noContent();
+    }
+
+    public function grabOrder(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'driverId' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        // Ensure order is READY before rider grabs it
+        if ($order->order_status !== 'READY') {
+            return response()->json([
+                'message' => 'Order cannot be picked up. Current status: ' . $order->order_status
+            ], 400);
+        }
+
+        // Update status + assign driver
+        $order->update([
+            'driver_id'    => $request->driverId,
         ]);
 
         return response()->noContent();
