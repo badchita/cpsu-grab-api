@@ -132,6 +132,37 @@ class OrderController extends Controller
         return response($response, $this->status);
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'orderStatus' => 'required|string|in:PENDING,ACCEPTED,PREPARING,READY,PICKED_UP,IN_TRANSIT,DELIVERED,CANCELLED',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $order = Order::find($id);
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $order->update([
+            'order_status' => $request->orderStatus
+        ]);
+
+        return response()->json([
+            'message' => 'Order status updated successfully',
+            'data' => new OrderResource($order->fresh())
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
