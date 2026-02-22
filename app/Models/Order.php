@@ -52,4 +52,19 @@ class Order extends Authenticatable
     {
         return $this->hasMany(Cart::class);
     }
+
+    public function canTransitionTo(string $newStatus): bool
+    {
+        $allowedTransitions = [
+            'PENDING' => ['ACCEPTED', 'CANCELLED'],
+            'ACCEPTED' => ['PREPARING', 'CANCELLED'],
+            'PREPARING' => ['READY'],
+            'READY' => ['PICKED_UP'],
+            'PICKED_UP' => ['IN_TRANSIT'],
+            'IN_TRANSIT' => ['DELIVERED'],
+        ];
+
+        return isset($allowedTransitions[$this->order_status]) &&
+            in_array($newStatus, $allowedTransitions[$this->order_status]);
+    }
 }

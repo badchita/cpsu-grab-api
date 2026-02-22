@@ -132,6 +132,26 @@ class OrderController extends Controller
         return response($response, $this->status);
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'orderStatus' => 'required|string'
+        ]);
+
+        $order = Order::findOrFail($id);
+
+        if (!$order->canTransitionTo($request->orderStatus)) {
+            return response()->json([
+                'message' => 'Invalid status transition'
+            ], 400);
+        }
+
+        $order->update([
+            'order_status' => $request->orderStatus
+        ]);
+
+        return response()->noContent();
+    }
     /**
      * Display the specified resource.
      */
