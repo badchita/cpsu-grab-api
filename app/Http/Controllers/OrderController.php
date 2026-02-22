@@ -6,6 +6,7 @@ use App\Http\Resources\OrderResource;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -190,6 +191,36 @@ class OrderController extends Controller
             'order_status' => 'PICKED_UP',
             'driver_id'    => $request->driverId,
         ]);
+
+        return response()->noContent();
+    }
+
+    public function markAsDelivered(Request $request, $id)
+    {
+        $order = Order::with('carts')->find($id);
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        // Ensure status flow: can only go to DELIVERED if currently IN_TRANSIT
+        if (!$order->canTransitionTo($request->orderStatus)) {
+            return response()->json([
+                'message' => 'Invalid status transition'
+            ], 400);
+        }
+
+        DB::transaction(function () use ($order) {
+            // Update order status
+            $order->update([
+                'order_status' => 'DELIVERED'
+            ]);
+
+            // Delete associated carts
+            Cart::where('order_id', $order->id)->delete();
+        });
 
         return response()->noContent();
     }
