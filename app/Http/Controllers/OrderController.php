@@ -134,23 +134,16 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'orderStatus' => 'required|string|in:PENDING,ACCEPTED,PREPARING,READY,PICKED_UP,IN_TRANSIT,DELIVERED,CANCELLED',
+        $request->validate([
+            'orderStatus' => 'required|string'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        $order = Order::findOrFail($id);
 
-        $order = Order::find($id);
-
-        if (!$order) {
+        if (!$order->canTransitionTo($request->orderStatus)) {
             return response()->json([
-                'message' => 'Order not found'
-            ], 404);
+                'message' => 'Invalid status transition'
+            ], 400);
         }
 
         $order->update([
@@ -162,7 +155,6 @@ class OrderController extends Controller
             'data' => new OrderResource($order->fresh())
         ]);
     }
-
     /**
      * Display the specified resource.
      */
