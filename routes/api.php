@@ -36,6 +36,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get("/order", [OrderController::class, "index"]);
     Route::post("/order", [OrderController::class, "store"]);
     Route::patch('/order/{id}/status', [OrderController::class, 'updateStatus']);
+    Route::patch('/order/{id}/pickedUp', [OrderController::class, 'pickedUp']);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
