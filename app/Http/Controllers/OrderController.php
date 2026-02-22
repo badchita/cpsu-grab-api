@@ -157,7 +157,7 @@ class OrderController extends Controller
         return response()->noContent();
     }
 
-    public function grabOrder(Request $request, $id)
+    public function pickedUp(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
             'driverId' => 'required|exists:users,id',
@@ -179,14 +179,15 @@ class OrderController extends Controller
         }
 
         // Ensure order is READY before rider grabs it
-        if ($order->order_status !== 'READY') {
+        if (!$order->canTransitionTo($request->orderStatus)) {
             return response()->json([
-                'message' => 'Order cannot be picked up. Current status: ' . $order->order_status
+                'message' => 'Invalid status transition'
             ], 400);
         }
 
         // Update status + assign driver
         $order->update([
+            'order_status' => 'PICKED_UP',
             'driver_id'    => $request->driverId,
         ]);
 
