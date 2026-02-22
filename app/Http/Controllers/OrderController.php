@@ -29,7 +29,12 @@ class OrderController extends Controller
 
         // Filter by order status
         if ($request->filled('orderStatus')) {
-            $query->where('order_status', $request->orderStatus);
+            if ($request->orderStatus === 'NOT_DELIVERED') {
+                // Exclude DELIVERED orders
+                $query->where('order_status', '<>', 'DELIVERED');
+            } else {
+                $query->where('order_status', $request->orderStatus);
+            }
         }
 
         // Filter by order reference
