@@ -150,10 +150,7 @@ class OrderController extends Controller
             'order_status' => $request->orderStatus
         ]);
 
-        return response()->json([
-            'message' => 'Order status updated successfully',
-            'data' => new OrderResource($order->fresh())
-        ]);
+        return response()->noContent();
     }
     /**
      * Display the specified resource.
