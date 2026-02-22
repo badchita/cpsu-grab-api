@@ -28,22 +28,22 @@ class OrderController extends Controller
 
         // Filter by order status
         if ($request->filled('orderStatus')) {
-            $query->where('order_status', $request->order_status);
+            $query->where('order_status', $request->orderStatus);
         }
 
         // Filter by order reference
         if ($request->filled('orderReferenceNumber')) {
-            $query->where('order_reference_number', 'like', '%' . $request->order_reference_number . '%');
+            $query->where('order_reference_number', 'like', '%' . $request->orderReferenceNumber . '%');
         }
 
         // Filter by customer
         if ($request->filled('customerId')) {
-            $query->where('customer_id', $request->customer_id);
+            $query->where('customer_id', $request->customerId);
         }
 
         // Filter by restaurant
         if ($request->filled('restaurantId')) {
-            $query->where('restaurant_id', $request->restaurant_id);
+            $query->where('restaurant_id', $request->restaurantId);
         }
 
         // Optional date filter
