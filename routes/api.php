@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
@@ -43,6 +44,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
 
     Route::get("/conversations/{id}", [ConversationController::class, "getConversations"]);
 
+    Route::post('/message/send-message', [MessageController::class, 'sendMessage']);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
