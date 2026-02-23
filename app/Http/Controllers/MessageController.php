@@ -28,19 +28,19 @@ class MessageController extends Controller
 
     public function sendMessage(Request $request)
     {
-        $authId = $request->currentUserId;
-        $receiverId = $request->receiver_id;
+        $currentUserId = $request->currentUserId;
+        $receiverUserId = $request->receiverUserId;
 
-        $conversation = $this->findOrCreateConversation($authId, $receiverId);
+        $conversation = $this->findOrCreateConversation($currentUserId, $receiverUserId);
 
         $message = Message::create([
             'conversation_id' => $conversation->id,
-            'sender_id' => $authId,
+            'sender_id' => $currentUserId,
             'message' => $request->message,
         ]);
 
         // Increment unread count
-        if ($conversation->user_one_id == $receiverId) {
+        if ($conversation->user_one_id == $receiverUserId) {
             $conversation->increment('user_one_unread');
         } else {
             $conversation->increment('user_two_unread');
