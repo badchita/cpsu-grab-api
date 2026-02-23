@@ -42,9 +42,12 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::patch('/order/{id}/pickedUp', [OrderController::class, 'pickedUp']);
     Route::patch('/order/{id}/delivered', [OrderController::class, 'markAsDelivered']);
 
-    Route::get("/conversation/{id}", [ConversationController::class, "getConversations"]);
+    Route::get("/conversation/{id}", [ConversationController::class, "getConversations"])->middleware('auth:sanctum');
+    Route::get('/conversation/getMessage/{id}', [ConversationController::class, 'getMessages']);
+
 
     Route::post('/message/sendMessage', [MessageController::class, 'sendMessage']);
+    // Route::get('/message/getMessage', [MessageController::class, 'getMessages']);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });

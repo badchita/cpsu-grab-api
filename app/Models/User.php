@@ -72,4 +72,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Cart::class);
     }
+
+    public function conversations()
+    {
+        return Conversation::where('user_one_id', $this->id)
+            ->orWhere('user_two_id', $this->id);
+    }
 }

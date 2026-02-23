@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Http\Request;
@@ -49,6 +50,23 @@ class MessageController extends Controller
         // Send OneSignal push
         // $this->sendOneSignalPush($receiverId, $request->message);
 
-        return response()->json($message);
+        $resource = new MessageResource($message);
+        return response()->json($resource->resolve());
+    }
+
+
+    public function getMessages(Conversation $conversation)
+    {
+        // $authId = $id;
+
+        // // 🔒 Security check: make sure user is part of the conversation
+        // if ($conversation->user_one_id !== $authId && $conversation->user_two_id !== $authId) {
+        //     abort(403, 'Unauthorized');
+        // }
+
+        // Return messages ordered by oldest first, wrapped in Resource
+        return MessageResource::collection(
+            $conversation->messages()->orderBy('created_at')->get()
+        );
     }
 }
