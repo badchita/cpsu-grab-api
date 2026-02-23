@@ -14,6 +14,7 @@ Route::post("/signIn", [AuthController::class, "signIn"]);
 
 Route::group(["middleware" => ["auth:sanctum"]], function () {
 
+    Route::get("/user", [UserController::class, "index"]);
     Route::get("/user/{id}", [UserController::class, "show"]);
     Route::put("/user/{id}", [UserController::class, "update"]);
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
