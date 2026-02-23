@@ -3,6 +3,8 @@
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RestaurantController;
@@ -40,6 +42,12 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::patch('/order/{id}/pickedUp', [OrderController::class, 'pickedUp']);
     Route::patch('/order/{id}/delivered', [OrderController::class, 'markAsDelivered']);
 
+    Route::get("/conversation/{id}", [ConversationController::class, "getConversations"])->middleware('auth:sanctum');
+    Route::get('/conversation/getMessage/{id}', [ConversationController::class, 'getMessages']);
+
+
+    Route::post('/message/sendMessage', [MessageController::class, 'sendMessage']);
+    // Route::get('/message/getMessage', [MessageController::class, 'getMessages']);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
