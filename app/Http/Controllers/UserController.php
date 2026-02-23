@@ -10,6 +10,36 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     private $status = 200;
+
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->filled('name')) {
+            $name = $request->name;
+
+            $query->where(function ($q) use ($name) {
+                $q->where('first_name', 'like', $name . '%')
+                    ->orWhere('last_name', 'like', $name . '%')
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", [$name . '%']);
+            });
+        }
+
+        $size = $request->get('size', 10);
+
+        $users = $query
+            ->orderBy('created_at', 'DESC')
+            ->paginate($size);
+
+        return response([
+            'data' => UsersResource::collection($users->items()),
+            'currentPage' => $users->currentPage(),
+            'totalPages' => $users->lastPage(),
+            'totalItems' => $users->total(),
+            'status' => 200
+        ]);
+    }
+
     public function show($id)
     {
         $user = User::with(['address', 'restaurant'])->find($id);
