@@ -31,6 +31,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/product", [ProductController::class, "store"]);
     Route::get("/product/{id}", [ProductController::class, "show"]);
     Route::put("/product/{id}", [ProductController::class, "update"]);
+    Route::post('/product/{id}/image', [ProductController::class, 'uploadImage']);
 
     Route::post("/cart", [CartController::class, "store"]);
     Route::get("/cart/user/{id}", [CartController::class, "getUserCart"]);

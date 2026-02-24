@@ -6,6 +6,7 @@ use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -53,7 +54,7 @@ class ProductController extends Controller
             'price'        => 'required|numeric|min:0',
             'quantity'     => 'required|integer|min:0',
             'description'  => 'nullable|string',
-            'image'        => 'nullable|string|max:255',
+            'image'        => 'required|image|max:2048',
             'restaurantId' => 'required|exists:restaurants,id',
         ]);
 
@@ -103,16 +104,39 @@ class ProductController extends Controller
             'name'     => $request->name,
             'description'      => $request->description,
             'category'    => $request->category,
-            'type'    => $request->type,
             'price'    => $request->price,
             'quantity'    => $request->quantity,
-            'image'    => $request->image,
             'restaurant_id'    => $request->restaurantId,
         ]);
 
-        $response = $product;
+        return response()->json($product, 200);
+    }
 
-        return response($response, $this->status);
+    public function uploadImage(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'required|image|max:2048', // max 2MB
+        ]);
+
+        $product = Product::findOrFail($id);
+
+        // Store new image in 'public/products'
+        $imagePath = $request->file('image')->store('products', 'public');
+
+        // Optionally delete old image if exists
+        if ($product->image && \Storage::disk('public')->exists($product->image)) {
+            \Storage::disk('public')->delete($product->image);
+        }
+
+        $product->update([
+            'image' => $imagePath
+        ]);
+
+        // Return displayable URL
+        return response()->json([
+            'image' => asset('storage/' . $imagePath),
+            'message' => 'Image uploaded successfully',
+        ]);
     }
 
     /**

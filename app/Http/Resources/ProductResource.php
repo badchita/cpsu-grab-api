@@ -22,6 +22,7 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'image'       => $this->image,
             'quantity'    => $this->quantity,
+            'restaurantId'    => $this->restaurant_id,
             'restaurant'  => new RestaurantResource($this->whenLoaded('restaurant')),
         ];
     }
