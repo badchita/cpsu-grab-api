@@ -29,6 +29,7 @@ class Product extends Authenticatable
         'description',
         'image',
         'quantity',
+        'restaurant_id',
     ];
 
     public function restaurant()
