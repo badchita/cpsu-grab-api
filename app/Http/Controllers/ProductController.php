@@ -50,7 +50,6 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'name'         => 'required|string|max:255',
             'category'     => 'required|in:MAIN_DISH,SIDE_DISH,BEVERAGE,DESSERT',
-            'type'         => 'required|string|max:100',
             'price'        => 'required|numeric|min:0',
             'quantity'     => 'required|integer|min:0',
             'description'  => 'nullable|string',
@@ -65,7 +64,6 @@ class ProductController extends Controller
         $product = new Product();
         $product->name = $request->name;
         $product->category = $request->category;
-        $product->type = $request->type;
         $product->price = $request->price;
         $product->quantity = $request->quantity;
         $product->description = $request->description;
