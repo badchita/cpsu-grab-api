@@ -114,6 +114,8 @@ class OrderController extends Controller
             'restaurant_id' => $request->restaurantId,
             'total_payment' => $request->totalPayment,
             'order_status'  => 'PENDING',
+            'payment_method' => $request->paymentMethod,
+            'payment_status' => $request->paymentStatus,
         ]);
 
         foreach ($request->carts as $item) {
