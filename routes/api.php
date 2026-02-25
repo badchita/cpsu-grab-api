@@ -21,6 +21,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::put("/user/{id}", [UserController::class, "update"]);
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
     Route::get("/user/ownerProducts/{id}", [UserController::class, "getOwnerProducts"]);
+    Route::post('/user/{id}/qr', [UserController::class, 'uploadQrImage']);
 
     Route::post("/address", [AddressController::class, "store"]);
 
@@ -46,9 +47,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get("/conversation/{id}", [ConversationController::class, "getConversations"])->middleware('auth:sanctum');
     Route::get('/conversation/getMessage/{id}', [ConversationController::class, 'getMessages']);
 
-
     Route::post('/message/sendMessage', [MessageController::class, 'sendMessage']);
-    // Route::get('/message/getMessage', [MessageController::class, 'getMessages']);
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });

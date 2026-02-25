@@ -155,4 +155,28 @@ class UserController extends Controller
             'status' => 200
         ]);
     }
+
+    public function uploadQrImage(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'required|image|max:2048', // max 2MB
+        ]);
+
+        $product = User::findOrFail($id);
+
+        $imagePath = $request->file('image')->store('users', 'public');
+
+        if ($product->image && \Storage::disk('public')->exists($product->image)) {
+            \Storage::disk('public')->delete($product->image);
+        }
+
+        $product->update([
+            'image' => $imagePath
+        ]);
+
+        return response()->json([
+            'image' => asset('storage/' . $imagePath),
+            'message' => 'Image uploaded successfully',
+        ]);
+    }
 }
