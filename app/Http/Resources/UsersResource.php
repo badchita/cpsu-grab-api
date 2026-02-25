@@ -26,6 +26,7 @@ class UsersResource extends JsonResource
             'dateOfBirth' => $this->date_of_birth,
             'gender' => $this->gender,
             'isOnboarded' => $this->is_onboarded,
+            'gcashQrCode' => $this->gcash_qr_code,
             'address' => $this->whenLoaded('address', function () {
                 return [
                     'id' => $this->address->id,

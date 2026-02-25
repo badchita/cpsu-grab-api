@@ -159,19 +159,19 @@ class UserController extends Controller
     public function uploadQrImage(Request $request, $id)
     {
         $request->validate([
-            'image' => 'required|image|max:2048', // max 2MB
+            'gcashQrCode' => 'required|image|max:2048', // max 2MB
         ]);
 
-        $product = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
-        $imagePath = $request->file('image')->store('users', 'public');
+        $imagePath = $request->file('gcashQrCode')->store('users', 'public');
 
-        if ($product->image && \Storage::disk('public')->exists($product->image)) {
-            \Storage::disk('public')->delete($product->image);
+        if ($user->gcash_qr_code && \Storage::disk('public')->exists($user->gcash_qr_code)) {
+            \Storage::disk('public')->delete($user->gcash_qr_code);
         }
 
-        $product->update([
-            'image' => $imagePath
+        $user->update([
+            'gcash_qr_code' => $imagePath
         ]);
 
         return response()->json([
