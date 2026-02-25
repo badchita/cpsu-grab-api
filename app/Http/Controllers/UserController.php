@@ -155,4 +155,28 @@ class UserController extends Controller
             'status' => 200
         ]);
     }
+
+    public function uploadQrImage(Request $request, $id)
+    {
+        $request->validate([
+            'gcashQrCode' => 'required|image|max:2048', // max 2MB
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $imagePath = $request->file('gcashQrCode')->store('users', 'public');
+
+        if ($user->gcash_qr_code && \Storage::disk('public')->exists($user->gcash_qr_code)) {
+            \Storage::disk('public')->delete($user->gcash_qr_code);
+        }
+
+        $user->update([
+            'gcash_qr_code' => $imagePath
+        ]);
+
+        return response()->json([
+            'image' => asset('storage/' . $imagePath),
+            'message' => 'Image uploaded successfully',
+        ]);
+    }
 }

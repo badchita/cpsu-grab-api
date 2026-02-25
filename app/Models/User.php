@@ -33,6 +33,7 @@ class User extends Authenticatable
         'status',
         'gender',
         'is_onboarded',
+        'gcash_qr_code',
     ];
 
     /**

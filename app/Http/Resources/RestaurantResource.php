@@ -23,6 +23,8 @@ class RestaurantResource extends JsonResource
                 'id'    => $this->owner->id ?? null,
                 'name'  => $this->owner->first_name . ' ' . $this->owner->last_name,
                 'email' => $this->owner->email,
+                'gcashQrCode' => $this->owner->gcash_qr_code,
+                'contactNumber' => $this->owner->contact_number,
             ],
             'created_at'  => $this->created_at,
         ];

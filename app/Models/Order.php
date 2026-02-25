@@ -26,6 +26,8 @@ class Order extends Authenticatable
         'restaurant_id',
         'total_payment',
         'order_status',
+        'payment_method',
+        'payment_status',
     ];
 
     public function customer()
