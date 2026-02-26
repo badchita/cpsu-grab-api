@@ -54,7 +54,6 @@ class ProductController extends Controller
             'price'        => 'required|numeric|min:0',
             'quantity'     => 'required|integer|min:0',
             'description'  => 'nullable|string',
-            'image'        => 'required|image|max:2048',
             'restaurantId' => 'required|exists:restaurants,id',
         ]);
 
