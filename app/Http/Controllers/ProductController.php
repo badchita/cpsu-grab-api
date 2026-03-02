@@ -23,10 +23,6 @@ class ProductController extends Controller
             $query->where('name', 'like', $request->name . '%');
         }
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }
@@ -50,7 +46,6 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name'         => 'required|string|max:255',
-            'category'     => 'required|in:MAIN_DISH,SIDE_DISH,BEVERAGE,DESSERT',
             'price'        => 'required|numeric|min:0',
             'quantity'     => 'required|integer|min:0',
             'description'  => 'nullable|string',
@@ -64,7 +59,6 @@ class ProductController extends Controller
 
         $product = new Product();
         $product->name = $request->name;
-        $product->category = $request->category;
         $product->price = $request->price;
         $product->quantity = $request->quantity;
         $product->description = $request->description;
@@ -103,7 +97,6 @@ class ProductController extends Controller
         $product->update([
             'name'     => $request->name,
             'description'      => $request->description,
-            'category'    => $request->category,
             'price'    => $request->price,
             'quantity'    => $request->quantity,
             'restaurant_id'    => $request->restaurantId,
