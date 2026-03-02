@@ -68,6 +68,8 @@ class RestaurantController extends Controller
             'name'     => $request->name,
             'description'      => $request->description,
             'status'    => $request->status,
+            'is_closed'    => $request->isClosed,
+            'closing_time'    => $request->closingTime,
         ]);
 
         $response = $restaurant;
