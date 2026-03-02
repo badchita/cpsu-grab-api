@@ -77,6 +77,27 @@ class RestaurantController extends Controller
         return response($response, $this->status);
     }
 
+    public function toggleClosed($id)
+    {
+        $restaurant = Restaurant::find($id);
+
+        if (!$restaurant) {
+            return response()->json([
+                'message' => 'Restaurant not found'
+            ], 404);
+        }
+
+        // 🔄 Toggle value
+        $restaurant->is_closed = !$restaurant->is_closed;
+        $restaurant->save();
+
+        return response()->json([
+            'message' => 'Restaurant status updated successfully',
+            'restaurant_id' => $restaurant->id,
+            'is_closed' => $restaurant->is_closed
+        ]);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
