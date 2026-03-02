@@ -136,10 +136,6 @@ class UserController extends Controller
             $query->where('name', 'like', $request->name . '%');
         }
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
         if ($request->has('type')) {
             $query->where('type', $request->type);
         }

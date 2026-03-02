@@ -19,6 +19,8 @@ class RestaurantResource extends JsonResource
             'name'        => $this->name,
             'description' => $this->description,
             'status'      => $this->status,
+            'isClosed'      => $this->is_closed,
+            'closingTime'      => $this->closing_time,
             'owner'       => [
                 'id'    => $this->owner->id ?? null,
                 'name'  => $this->owner->first_name . ' ' . $this->owner->last_name,

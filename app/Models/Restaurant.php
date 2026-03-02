@@ -23,6 +23,8 @@ class Restaurant extends Authenticatable
         'name',
         'description',
         'status',
+        'is_closed',
+        'closing_time',
     ];
 
     public function owner()
