@@ -76,7 +76,7 @@ class CartController extends Controller
     public function getUserCart($userId)
     {
         $user = User::with(['carts' => function ($query) {
-            $query->where('is_checked_out', false)->with('product.restaurant');
+            $query->with('product.restaurant');
         }])->find($userId);
 
         if (!$user) {
