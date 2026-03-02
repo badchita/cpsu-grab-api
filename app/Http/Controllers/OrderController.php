@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Models\Product;
 
 class OrderController extends Controller
 {
@@ -79,9 +80,6 @@ class OrderController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -89,10 +87,10 @@ class OrderController extends Controller
             'vendorId'      => 'required|exists:users,id',
             'restaurantId'  => 'required|exists:restaurants,id',
             'totalPayment'  => 'required|numeric|min:0',
-            'carts'          => 'required|array|min:1',
+            'carts'         => 'required|array|min:1',
             'carts.*.cartId'    => 'required|exists:carts,id',
             'carts.*.productId' => 'required|exists:products,id',
-            'carts.*.quantity'   => 'required|integer|min:1',
+            'carts.*.quantity'  => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -102,46 +100,79 @@ class OrderController extends Controller
             ], 422);
         }
 
-        $orderRef = strtoupper('ORD' . Str::random(10));
-        while (Order::where('order_reference_number', $orderRef)->exists()) {
+        DB::beginTransaction();
+
+        try {
+
+            // Generate order reference
             $orderRef = strtoupper('ORD' . Str::random(10));
-        }
-
-        $order = Order::create([
-            'order_reference_number' => $orderRef,
-            'customer_id'   => $request->customerId,
-            'vendor_id'     => $request->vendorId,
-            'restaurant_id' => $request->restaurantId,
-            'total_payment' => $request->totalPayment,
-            'order_status'  => 'PENDING',
-            'payment_method' => $request->paymentMethod,
-            'payment_status' => $request->paymentStatus,
-        ]);
-
-        foreach ($request->carts as $item) {
-            $cart = Cart::where('id', $item['cartId'])
-                ->where('is_checked_out', false)
-                ->first();
-
-            if ($cart) {
-                $cart->is_checked_out = true;
-                $cart->order_id = $order->id;
-                $cart->save();
+            while (Order::where('order_reference_number', $orderRef)->exists()) {
+                $orderRef = strtoupper('ORD' . Str::random(10));
             }
+
+            $order = Order::create([
+                'order_reference_number' => $orderRef,
+                'customer_id'   => $request->customerId,
+                'vendor_id'     => $request->vendorId,
+                'restaurant_id' => $request->restaurantId,
+                'total_payment' => $request->totalPayment,
+                'order_status'  => 'PENDING',
+                'payment_method' => $request->paymentMethod,
+                'payment_status' => $request->paymentStatus,
+            ]);
+
+            foreach ($request->carts as $item) {
+
+                // 🔒 Lock product row to prevent race condition
+                $product = Product::where('id', $item['productId'])
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$product) {
+                    throw new \Exception("Product not found.");
+                }
+
+                // ❗ Check stock availability
+                if ($product->quantity < $item['quantity']) {
+                    throw new \Exception("Insufficient stock for {$product->name}");
+                }
+
+                // ✅ Decrease stock
+                $product->quantity -= $item['quantity'];
+                $product->save();
+
+                // Update cart
+                $cart = Cart::where('id', $item['cartId'])
+                    ->where('is_checked_out', false)
+                    ->first();
+
+                if ($cart) {
+                    $cart->is_checked_out = true;
+                    $cart->order_id = $order->id;
+                    $cart->save();
+                }
+            }
+
+            DB::commit();
+
+            $order->load([
+                'customer',
+                'vendor',
+                'driver',
+                'restaurant',
+                'carts.product'
+            ]);
+
+            return response(new OrderResource($order), 201);
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Order failed',
+                'error' => $e->getMessage()
+            ], 400);
         }
-
-
-        $order->load([
-            'customer',
-            'vendor',
-            'driver',
-            'restaurant',
-            'carts.product'
-        ]);
-
-        $response = new OrderResource($order);
-
-        return response($response, $this->status);
     }
 
     public function updateStatus(Request $request, $id)
