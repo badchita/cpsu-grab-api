@@ -38,13 +38,13 @@ class RestaurantController extends Controller
      */
     public function show($id)
     {
-        $product = Restaurant::find($id);
+        $restaurant = Restaurant::find($id);
 
-        if (!$product) {
+        if (!$restaurant) {
             return response()->json(['message' => 'Restaurant not found'], 404);
         }
 
-        $response = new RestaurantResource($product);
+        $response = new RestaurantResource($restaurant);
 
         return response($response, $this->status);
     }
@@ -90,12 +90,9 @@ class RestaurantController extends Controller
         // 🔄 Toggle value
         $restaurant->is_closed = !$restaurant->is_closed;
         $restaurant->save();
+        $response = new RestaurantResource($restaurant);
 
-        return response()->json([
-            'message' => 'Restaurant status updated successfully',
-            'restaurant_id' => $restaurant->id,
-            'is_closed' => $restaurant->is_closed
-        ]);
+        return response($response, $this->status);
     }
 
     /**
