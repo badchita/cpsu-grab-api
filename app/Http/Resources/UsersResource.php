@@ -49,6 +49,8 @@ class UsersResource extends JsonResource
                     'name'        => $this->restaurant->name,
                     'description' => $this->restaurant->description,
                     'status'      => $this->restaurant->status,
+                    'isClosed'      => $this->restaurant->is_closed,
+                    'closingTime'      => $this->restaurant->closing_time,
                 ];
             }),
         ];
