@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use Cloudinary\Cloudinary;
+use Cloudinary\Configuration\Configuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
 {
@@ -140,17 +141,25 @@ class ProductController extends Controller
 
         $product = Product::findOrFail($id);
 
-        // Upload to Cloudinary
-        $uploadedFile = Cloudinary::upload(
+        // Initialize Cloudinary instance
+        $cloudinary = new Cloudinary([
+            'cloud' => [
+                'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
+                'api_key'    => env('CLOUDINARY_KEY'),
+                'api_secret' => env('CLOUDINARY_SECRET'),
+            ],
+        ]);
+
+        // Upload the image
+        $uploadedFile = $cloudinary->uploadApi()->upload(
             $request->file('image')->getRealPath(),
             [
                 'folder' => 'products'
             ]
         );
 
-        $imageUrl = $uploadedFile->getSecurePath();
+        $imageUrl = $uploadedFile['secure_url'];
 
-        // Save URL directly in DB
         $product->update([
             'image' => $imageUrl
         ]);
