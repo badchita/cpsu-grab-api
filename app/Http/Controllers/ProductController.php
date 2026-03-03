@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductController extends Controller
 {
@@ -104,30 +105,59 @@ class ProductController extends Controller
         return response()->json($product, 200);
     }
 
+    // public function uploadImage(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'image' => 'required|image|max:2048', // max 2MB
+    //     ]);
+
+    //     $product = Product::findOrFail($id);
+
+    //     // Store new image in 'public/products'
+    //     $imagePath = $request->file('image')->store('products', 'public');
+
+    //     // Optionally delete old image if exists
+    //     if ($product->image && \Storage::disk('public')->exists($product->image)) {
+    //         \Storage::disk('public')->delete($product->image);
+    //     }
+
+    //     $product->update([
+    //         'image' => $imagePath
+    //     ]);
+
+    //     // Return displayable URL
+    //     return response()->json([
+    //         'image' => asset('storage/' . $imagePath),
+    //         'message' => 'Image uploaded successfully',
+    //     ]);
+    // }
+
     public function uploadImage(Request $request, $id)
     {
         $request->validate([
-            'image' => 'required|image|max:2048', // max 2MB
+            'image' => 'required|image|max:2048',
         ]);
 
         $product = Product::findOrFail($id);
 
-        // Store new image in 'public/products'
-        $imagePath = $request->file('image')->store('products', 'public');
+        // Upload to Cloudinary
+        $uploadedFile = Cloudinary::upload(
+            $request->file('image')->getRealPath(),
+            [
+                'folder' => 'products'
+            ]
+        );
 
-        // Optionally delete old image if exists
-        if ($product->image && \Storage::disk('public')->exists($product->image)) {
-            \Storage::disk('public')->delete($product->image);
-        }
+        $imageUrl = $uploadedFile->getSecurePath();
 
+        // Save URL directly in DB
         $product->update([
-            'image' => $imagePath
+            'image' => $imageUrl
         ]);
 
-        // Return displayable URL
         return response()->json([
-            'image' => asset('storage/' . $imagePath),
-            'message' => 'Image uploaded successfully',
+            'image' => $imageUrl,
+            'message' => 'Image uploaded successfully'
         ]);
     }
 
