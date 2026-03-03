@@ -127,4 +127,23 @@ class CartController extends Controller
             'status' => 200
         ]);
     }
+
+    public function deleteCartItem($cartId)
+    {
+        $cart = Cart::find($cartId);
+
+        if (!$cart) {
+            return response([
+                'message' => 'Cart item not found.',
+                'status' => 404
+            ], 404);
+        }
+
+        $cart->delete();
+
+        return response([
+            'message' => 'Cart item deleted successfully.',
+            'status' => 200
+        ]);
+    }
 }
