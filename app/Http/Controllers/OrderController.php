@@ -32,9 +32,11 @@ class OrderController extends Controller
         if ($request->filled('orderStatus')) {
             if ($request->orderStatus === 'NOT_DELIVERED') {
                 // Exclude DELIVERED orders
-                $query->where('order_status', '<>', 'DELIVERED');
+                $query->whereNotIn('order_status', ['DELIVERED', 'CANCELLED']);
             } else {
-                $query->where('order_status', $request->orderStatus);
+                $statuses = explode(',', $request->orderStatus);
+
+                $query->whereIn('order_status', $statuses);
             }
         }
 
@@ -49,8 +51,8 @@ class OrderController extends Controller
         }
 
         // Filter by restaurant
-        if ($request->filled('restaurantId')) {
-            $query->where('restaurant_id', $request->restaurantId);
+        if ($request->filled('vendorId')) {
+            $query->where('vendor_id', $request->vendorId);
         }
 
         if ($request->filled('driverId')) {
@@ -68,6 +70,14 @@ class OrderController extends Controller
         $size = $request->get('size', 10);
 
         $orders = $query
+            ->with([
+                'customer.address',
+                'vendor.address',
+                'driver.address',
+                'restaurant',
+                'carts',
+                'carts.product'
+            ])
             ->orderBy('created_at', 'DESC')
             ->paginate($size);
 
@@ -181,19 +191,34 @@ class OrderController extends Controller
             'orderStatus' => 'required|string'
         ]);
 
-        $order = Order::findOrFail($id);
+        return DB::transaction(function () use ($request, $id) {
 
-        if (!$order->canTransitionTo($request->orderStatus)) {
-            return response()->json([
-                'message' => 'Invalid status transition'
-            ], 400);
-        }
+            $order = Order::findOrFail($id);
 
-        $order->update([
-            'order_status' => $request->orderStatus
-        ]);
+            if (!$order->canTransitionTo($request->orderStatus)) {
+                return response()->json([
+                    'message' => 'Invalid status transition'
+                ], 400);
+            }
 
-        return response()->noContent();
+            // Update status first
+            $order->order_status = $request->orderStatus;
+
+            if ($request->orderStatus === 'CANCELLED') {
+                $cart = Cart::where('order_id', $order->id)->first();
+                $product = Product::findOrFail($cart->product_id);
+
+                $product->update([
+                    'quantity'    => $product->quantity + $cart->quantity,
+                ]);
+                // ✅ Delete carts where order_id = this order id
+                Cart::where('order_id', $order->id)->delete();
+            }
+
+            $order->save();
+
+            return response()->noContent();
+        });
     }
 
     public function pickedUp(Request $request, $id)

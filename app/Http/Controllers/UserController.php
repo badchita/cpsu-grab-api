@@ -175,4 +175,19 @@ class UserController extends Controller
             'message' => 'Image uploaded successfully',
         ]);
     }
+
+    public function updateContactNumber(Request $request)
+    {
+        $user = User::findOrFail($request->id);
+
+        $user->update([
+            'contact_number' => $request->contactNumber,
+        ]);
+
+        $userResponse = User::with(['address', 'restaurant'])
+            ->where('id', $user->id)
+            ->first();
+
+        return response(new UsersResource($userResponse), 200);
+    }
 }

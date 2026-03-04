@@ -22,8 +22,10 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
     Route::get("/user/ownerProducts/{id}", [UserController::class, "getOwnerProducts"]);
     Route::post('/user/{id}/qr', [UserController::class, 'uploadQrImage']);
+    Route::put('/user/{id}/updateContactNumber', [UserController::class, 'updateContactNumber']);
 
     Route::post("/address", [AddressController::class, "store"]);
+    Route::put('/address/{id}/updateDelivery', [AddressController::class, 'updateDelivery']);
 
     Route::put("/restaurant/{id}", [RestaurantController::class, "update"]);
     Route::get("/restaurant/{id}", [RestaurantController::class, "show"]);
@@ -33,11 +35,13 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/product", [ProductController::class, "store"]);
     Route::get("/product/{id}", [ProductController::class, "show"]);
     Route::put("/product/{id}", [ProductController::class, "update"]);
+    Route::delete("/product/{id}", [ProductController::class, "destroy"]);
     Route::post('/product/{id}/image', [ProductController::class, 'uploadImage']);
 
     Route::post("/cart", [CartController::class, "store"]);
     Route::get("/cart/user/{id}", [CartController::class, "getUserCart"]);
     Route::put("/cart/quantities", [CartController::class, "updateCartQuantities"]);
+    Route::delete('/cart/{cartId}', [CartController::class, 'deleteCartItem']);
 
     Route::get("/order", [OrderController::class, "index"]);
     Route::post("/order", [OrderController::class, "store"]);
