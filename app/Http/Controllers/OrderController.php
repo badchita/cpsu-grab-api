@@ -68,6 +68,14 @@ class OrderController extends Controller
         $size = $request->get('size', 10);
 
         $orders = $query
+            ->with([
+                'customer.address',
+                'vendor.address',
+                'driver.address',
+                'restaurant',
+                'carts',
+                'carts.product'
+            ])
             ->orderBy('created_at', 'DESC')
             ->paginate($size);
 
