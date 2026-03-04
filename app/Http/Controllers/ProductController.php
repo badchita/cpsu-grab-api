@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
+use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -166,6 +168,30 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return DB::transaction(function () use ($id) {
+
+            $product = Product::findOrFail($id);
+
+            // 🚨 Check if product exists in any checked out cart
+            $existsInCompletedOrder = Cart::where('product_id', $product->id)
+                ->where('is_checked_out', 1)
+                ->exists();
+
+            if ($existsInCompletedOrder) {
+                return response()->json([
+                    'message' => 'Product cannot be deleted because it is part of a completed order.'
+                ], 400);
+            }
+
+            // 🧹 Delete carts that contain this product (not checked out)
+            Cart::where('product_id', $product->id)->delete();
+
+            // 🗑 Delete product
+            $product->delete();
+
+            return response()->json([
+                'message' => 'Product deleted successfully.'
+            ], 200);
+        });
     }
 }
