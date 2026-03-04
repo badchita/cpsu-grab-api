@@ -179,7 +179,7 @@ class ProductController extends Controller
 
             if ($existsInCompletedOrder) {
                 return response()->json([
-                    'message' => 'Product cannot be deleted because it is part of a completed order.'
+                    'message' => 'Product cannot be deleted because it is part of a ongoing order.'
                 ], 400);
             }
 
