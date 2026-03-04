@@ -22,6 +22,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/user/onboard/{id}", [UserController::class, "onBoard"]);
     Route::get("/user/ownerProducts/{id}", [UserController::class, "getOwnerProducts"]);
     Route::post('/user/{id}/qr', [UserController::class, 'uploadQrImage']);
+    Route::post('/user/{id}/updateContactNumber', [UserController::class, 'updateContactNumber']);
 
     Route::post("/address", [AddressController::class, "store"]);
     Route::put('/address/{id}/updateDelivery', [AddressController::class, 'updateDelivery']);
