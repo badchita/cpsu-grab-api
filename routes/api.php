@@ -24,6 +24,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post('/user/{id}/qr', [UserController::class, 'uploadQrImage']);
 
     Route::post("/address", [AddressController::class, "store"]);
+    Route::put('/address/{id}/updateDelivery', [AddressController::class, 'updateDelivery']);
 
     Route::put("/restaurant/{id}", [RestaurantController::class, "update"]);
     Route::get("/restaurant/{id}", [RestaurantController::class, "show"]);

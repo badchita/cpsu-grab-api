@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AddressResource;
+use App\Http\Resources\UsersResource;
 use Illuminate\Http\Request;
 use App\Models\Address;
+use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 
 class AddressController extends Controller
@@ -76,9 +79,33 @@ class AddressController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateDelivery(Request $request)
     {
-        //
+        $address = Address::findOrFail($request->id);
+
+        $address->update([
+            'street'      =>  $request->street,
+            'barangay'    =>  $request->barangay,
+            'city'        =>  $request->city,
+            'province'    =>  $request->province,
+            'postal_code' =>  $request->postalCode,
+            'country'     =>  $request->country,
+            'building'    =>  $request->building,
+            'landmark'    =>  $request->landmark,
+            'latitude'    =>  $request->latitude,
+            'longitude'   =>  $request->longitude,
+        ]);
+
+        // Get user based on address relationship
+        $user = User::with(['address', 'restaurant'])
+            ->where('id', $address->user_id)
+            ->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        return response(new UsersResource($user), 200);
     }
 
     /**
