@@ -51,8 +51,8 @@ class OrderController extends Controller
         }
 
         // Filter by restaurant
-        if ($request->filled('restaurantId')) {
-            $query->where('restaurant_id', $request->restaurantId);
+        if ($request->filled('vendorId')) {
+            $query->where('vendor_id', $request->vendorId);
         }
 
         if ($request->filled('driverId')) {
