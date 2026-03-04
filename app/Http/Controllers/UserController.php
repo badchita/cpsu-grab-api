@@ -184,6 +184,10 @@ class UserController extends Controller
             'contact_number' => $request->contactNumber,
         ]);
 
-        return response(new UsersResource($user), 200);
+        $userResponse = User::with(['address', 'restaurant'])
+            ->where('id', $user->id)
+            ->first();
+
+        return response(new UsersResource($userResponse), 200);
     }
 }
