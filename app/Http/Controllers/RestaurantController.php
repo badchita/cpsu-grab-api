@@ -12,9 +12,24 @@ class RestaurantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $query = Restaurant::with('owner');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', $request->name . '%');
+        }
+
+        $size = $request->get('size', 10);
+        $restaurants = $query->orderBy('created_at', 'DESC')->paginate($size);
+
+        return response([
+            'data' => RestaurantResource::collection($restaurants->items()),
+            'currentPage' => $restaurants->currentPage(),
+            'totalPages' => $restaurants->lastPage(),
+            'totalItems' => $restaurants->total(),
+            'status' => 200
+        ]);
     }
 
     /**
