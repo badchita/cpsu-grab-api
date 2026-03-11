@@ -287,10 +287,18 @@ class OrderController extends Controller
 
         return response()->noContent();
     }
-    /**
-     * Display the specified resource.
-     */
-    public function show($id) {}
+
+    public function show($id)
+    {
+        $order = Order::with(['customer', 'vendor', 'driver', 'restaurant', 'carts'])->find($id);
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found.'], 404);
+        }
+
+        $data = new OrderResource($order);
+        return response($data, $this->status);
+    }
 
     /**
      * Update the specified resource in storage.
