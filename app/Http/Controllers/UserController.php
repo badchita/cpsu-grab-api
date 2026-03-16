@@ -190,4 +190,13 @@ class UserController extends Controller
 
         return response(new UsersResource($userResponse), 200);
     }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+
+        $user->delete();
+
+        return response()->noContent();
+    }
 }
