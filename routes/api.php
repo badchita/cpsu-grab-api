@@ -23,6 +23,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::get("/user/ownerProducts/{id}", [UserController::class, "getOwnerProducts"]);
     Route::post('/user/{id}/qr', [UserController::class, 'uploadQrImage']);
     Route::put('/user/{id}/updateContactNumber', [UserController::class, 'updateContactNumber']);
+    Route::delete('/user/{id}', [UserController::class, 'destroy']);
 
     Route::post("/address", [AddressController::class, "store"]);
     Route::put('/address/{id}/updateDelivery', [AddressController::class, 'updateDelivery']);
