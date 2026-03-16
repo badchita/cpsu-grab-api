@@ -46,6 +46,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
 
     Route::get("/order", [OrderController::class, "index"]);
     Route::post("/order", [OrderController::class, "store"]);
+    Route::get("/order/{id}", [OrderController::class, "show"]);
     Route::patch('/order/{id}/status', [OrderController::class, 'updateStatus']);
     Route::patch('/order/{id}/pickedUp', [OrderController::class, 'pickedUp']);
     Route::patch('/order/{id}/delivered', [OrderController::class, 'markAsDelivered']);
