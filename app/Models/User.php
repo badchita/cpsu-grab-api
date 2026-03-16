@@ -59,6 +59,35 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+
+            // Delete address
+            $user->address()?->delete();
+
+            // Delete restaurant + products if vendor
+            if ($user->restaurant) {
+                $user->restaurant->products()->delete();
+                $user->restaurant->delete();
+            }
+
+            // Delete carts
+            $user->carts()->delete();
+
+            // Delete orders where user is customer
+            $user->customerOrders()->delete();
+
+            // Delete orders where user is vendor
+            $user->vendorOrders()->delete();
+
+            // Delete orders where user is driver
+            $user->driverOrders()->delete();
+        });
+    }
+
     public function address()
     {
         return $this->hasOne(Address::class);
@@ -78,5 +107,20 @@ class User extends Authenticatable
     {
         return Conversation::where('user_one_id', $this->id)
             ->orWhere('user_two_id', $this->id);
+    }
+
+    public function customerOrders()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    public function vendorOrders()
+    {
+        return $this->hasMany(Order::class, 'vendor_id');
+    }
+
+    public function driverOrders()
+    {
+        return $this->hasMany(Order::class, 'driver_id');
     }
 }
