@@ -113,8 +113,13 @@ class RestaurantController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Restaurant $restaurant)
+    public function destroy($id)
     {
-        //
+        $restaurant = Restaurant::findOrFail($id);
+        $restaurant->delete();
+
+        return response()->json([
+            'message' => 'Restaurant deleted successfully.'
+        ]);
     }
 }
