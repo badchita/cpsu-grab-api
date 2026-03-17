@@ -27,6 +27,19 @@ class Restaurant extends Authenticatable
         'closing_time',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($restaurant) {
+            foreach ($restaurant->products as $product) {
+                Cart::where('product_id', $product->id)->delete();
+            }
+
+            $restaurant->products()->delete();
+        });
+    }
+
     public function owner()
     {
         return $this->belongsTo(User::class, 'user_id');
