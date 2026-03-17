@@ -28,6 +28,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::post("/address", [AddressController::class, "store"]);
     Route::put('/address/{id}/updateDelivery', [AddressController::class, 'updateDelivery']);
 
+    Route::post('/restaurant', [RestaurantController::class, 'store']);
     Route::get("/restaurant", [RestaurantController::class, "index"]);
     Route::put("/restaurant/{id}", [RestaurantController::class, "update"]);
     Route::get("/restaurant/{id}", [RestaurantController::class, "show"]);
