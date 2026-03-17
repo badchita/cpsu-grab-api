@@ -46,7 +46,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             "email" => "required|email",
             "password" => "required",
-            "userType" => "required|string|in:CUSTOMER,VENDOR,DRIVER,ADMIN"
+            "userType" => "required|string|in:CUSTOMER,VENDOR,DRIVER,Admin"
         ]);
 
         $user = User::where("email", $validated["email"])->first();
