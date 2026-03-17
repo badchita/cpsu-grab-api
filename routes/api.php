@@ -53,6 +53,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::patch('/order/{id}/status', [OrderController::class, 'updateStatus']);
     Route::patch('/order/{id}/pickedUp', [OrderController::class, 'pickedUp']);
     Route::patch('/order/{id}/delivered', [OrderController::class, 'markAsDelivered']);
+    Route::delete('/order/{id}', [OrderController::class, 'destroy']);
 
     Route::get("/conversation/{id}", [ConversationController::class, "getConversations"])->middleware('auth:sanctum');
     Route::get('/conversation/getMessage/{id}', [ConversationController::class, 'getMessages']);
