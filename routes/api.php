@@ -32,6 +32,7 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
     Route::put("/restaurant/{id}", [RestaurantController::class, "update"]);
     Route::get("/restaurant/{id}", [RestaurantController::class, "show"]);
     Route::patch('/restaurant/{id}/toggleClosed', [RestaurantController::class, 'toggleClosed']);
+    Route::delete('/restaurant/{id}', [RestaurantController::class, 'destroy']);
 
     Route::get("/product", [ProductController::class, "index"]);
     Route::post("/product", [ProductController::class, "store"]);
