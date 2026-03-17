@@ -300,16 +300,26 @@ class OrderController extends Controller
         return response($data, $this->status);
     }
 
+    public function destroy($id)
+    {
+        return DB::transaction(function () use ($id) {
+
+            $order = Order::findOrFail($id);
+
+            // delete carts
+            $order->carts()->delete();
+
+            // delete order
+            $order->delete();
+
+            return response()->json([
+                'message' => 'Order deleted successfully.'
+            ], 200);
+        });
+    }
+
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request) {}
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
