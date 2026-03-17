@@ -45,7 +45,16 @@ class RestaurantController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $restaurant = new Restaurant();
+        $restaurant->name = $request->name;
+        $restaurant->description = $request->description;
+        $restaurant->status = 'ACTIVE';
+        $restaurant->user_id = $request->userId;
+        $restaurant->save();
+
+        $response = $restaurant;
+
+        return response($response, $this->status);
     }
 
     /**
