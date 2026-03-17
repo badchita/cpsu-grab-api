@@ -43,36 +43,40 @@ class AuthController extends Controller
     // Login In Api
     public function signIn(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             "email" => "required|email",
             "password" => "required",
+            "userType" => "required|string|in:CUSTOMER,VENDOR,DRIVER,ADMIN"
         ]);
 
-        $user = User::where("email", $request->email)->first();
-        if (!empty($user)) {
-            if (Hash::check($request->password, $user->password)) {
-                $token = $user->createToken("myToken")->plainTextToken;
+        $user = User::where("email", $validated["email"])->first();
 
-                return response()->json([
-                    "status" => true,
-                    "message" => "Sign In successfully",
-                    "token" => $token,
-                    "userId" => $user->id,
-                    "isOnboarded" => (bool) $user->is_onboarded,
-                    "userType" => $user->user_type,
-                ]);
-            } else {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Password did not match"
-                ]);
-            }
-        } else {
+        // Check user existence and password
+        if (!$user || !Hash::check($validated["password"], $user->password)) {
             return response()->json([
                 "status" => false,
-                "message" => "Email is invalid"
-            ]);
+                "message" => "Invalid email or password"
+            ], 401);
         }
+
+        // Check if the userType matches the user record
+        if ($user->user_type !== $validated["userType"]) {
+            return response()->json([
+                "status" => false,
+                "message" => "Invalid user type for this account"
+            ], 403);
+        }
+
+        $token = $user->createToken("myToken")->plainTextToken;
+
+        return response()->json([
+            "status" => true,
+            "message" => "Sign in successfully",
+            "token" => $token,
+            "userId" => $user->id,
+            "isOnboarded" => (bool) $user->is_onboarded,
+            "userType" => $user->user_type,
+        ]);
     }
 
     public function profile()
