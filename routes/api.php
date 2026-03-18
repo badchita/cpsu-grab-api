@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
@@ -62,3 +63,6 @@ Route::group(["middleware" => ["auth:sanctum"]], function () {
 
     Route::get("signOut", [AuthController::class, "signOut"]);
 });
+
+Route::post('forgot-password/verifyEmail', [ForgotPasswordController::class, 'verifyEmail']);
+Route::post('forgot-password/resetPassword', [ForgotPasswordController::class, 'resetPassword']);
