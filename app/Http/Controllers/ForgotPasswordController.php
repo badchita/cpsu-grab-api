@@ -26,14 +26,14 @@ class ForgotPasswordController extends Controller
         return response()->json([
             'success' => true,
             'email' => $user->email,
-            'message' => 'Email varified',
+            'message' => 'Email verified',
         ]);
     }
 
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8',
         ]);
 
